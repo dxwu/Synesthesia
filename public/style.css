@@ -36,3 +36,11 @@ body {
     grid-definition-rows: auto minmax(min-content, 1fr) auto
   }
 }
+
+.bar {
+  fill: steelblue;
+}
+
+#bars {
+  min-width: 531px;
+}

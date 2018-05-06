@@ -9,7 +9,7 @@ function registerMidiListener() {
 
 		var input = WebMidi.inputs[0];
 		if (input == null) {
-			console.log("Could not find input");
+			console.log("Could not find midi input");
 			return;
 		}
 
@@ -40,5 +40,5 @@ function changeColors(keyNumber) {
 	boxElement.style.backgroundColor = colorString;
 }
 
-registerMidiListener();
-registerAsciiListener();
+//registerMidiListener();
+//registerAsciiListener();
