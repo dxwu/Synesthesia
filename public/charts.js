@@ -1,50 +1,60 @@
-function random_data(alpha){
-	return alpha.map(function(d){
+
+// this function should be called when a key is pressed down
+// modify to take into account keys that were pressed down in the past but have not been released yet
+function processInput(keys, keyNumber, keyValue) {
+	var newKeys = keys.map(function(k){
 		return {
-			name: d,
-			value: jz.num.randBetween(1, 10)
+			note: k,
+			value: 0
 		}
 	});
+
+	newKeys[keyNumber].value = keyValue;
+
+	return newKeys;
 }
 
-function redraw(data, y_axis, svg, x , y, height, color) {
+// for now, this is random
+function getKeyColor(keyNumber) {
+    var colors = ["red", "green", "blue", "orange", "pink", "brown", "purple", "yellow"];
+    return colors[Math.floor(Math.random() * 7)];
+}
+
+function redraw(data, y_axis, svg, x , y, height) {
 	var x_var = Object.keys(data[0])[0], y_var = Object.keys(data[0])[1];
 
 	// join
 	var bar = svg.selectAll(".bar")
-	.data(data, function(d){ return d[x_var]; });
+		.data(data, function(d){ return d.note; });
 
 	var amount = svg.selectAll(".amount")
-	.data(data, function(d){ return d[x_var]; });
+		.data(data, function(d){ return d.note; });
 
 	// update
 	bar.transition()
-		.attr("y", function(d){ return y(d[y_var]); })
-		.attr("height", function(d){ return height - y(d[y_var]); });
+		.duration(1)
+		.attr("y", function(d){ return y(d.value); })
+		.attr("height", function(d){ return height - y(d.value); });
 
 	amount.transition()
-		.attr("y", function(d){ return y(d[y_var]); })
-		.text(function(d){ return d[y_var]; });
+		.duration(1)
+		.attr("y", function(d){ return y(d.value); });
 
 	// enter
 	bar.enter().append("rect")
 		.attr("class", "bar")
-		.attr("x", function(d){ return x(d[x_var]); })
-		.attr("y", function(d){ return y(d[y_var]); })
+		.attr("x", function(d){ return x(d.note); })
+		.attr("y", function(d){ return y(d.value); })
 		.attr("width", x.bandwidth())
-		.attr("height", function(d){ return height - y(d[y_var]); })
-		.attr("fill", function(d){ return color(d[x_var]); });
-
-	amount.enter().append("text")
-		.attr("class", "amount")
-		.attr("x", function(d){ return x(d[x_var]) + x.bandwidth() / 2; })
-		.attr("y", function(d){ return y(d[y_var]); })
-		.attr("dy", 16)
-		.text(function(d){ return d[y_var]; });
+		.attr("height", function(d){ return height - y(d.value); })
+		.attr("fill", function(d){ return getKeyColor(d.note); });
 }
 
 function displayBars() {
-	var alpha = "abcdefg".split("");
+	var keys = [];
+	for (i=1; i<=88; i++) {
+		keys.push(i);
+	}
 
     var setup = d3.marcon()
         .top(20)
@@ -60,8 +70,8 @@ function displayBars() {
 
     var x = d3.scaleBand()
 		.rangeRound([0, width])
-		.domain(alpha)
-		.padding(.2);
+		.domain(keys)
+		.padding(.1);
 
     var y = d3.scaleLinear()
 		.range([height, 0])
@@ -72,13 +82,9 @@ function displayBars() {
     var y_axis = d3.axisRight(y)
 		.tickSize(width)
 
-    var color = d3.scaleOrdinal(["#66c2a5","#fc8d62","#8da0cb","#e78ac3","#a6d854","#ffd92f","#e5c494"]);
-
-    redraw(random_data(alpha), y_axis, svg, x, y, height, color);
-
-    d3.interval(function(){
-		redraw(random_data(alpha), y_axis, svg, x, y, height, color);
-    }, 1000);
-}
+	document.body.addEventListener('keypress', function(e) {
+		redraw(processInput(keys, e.keyCode % 88, 10), y_axis, svg, x, y, height);
+	});
+}	
 
 displayBars();
