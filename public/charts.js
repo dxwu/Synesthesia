@@ -14,12 +14,6 @@ function processInput(keys, keyNumber, keyValue) {
 	return newKeys;
 }
 
-// for now, this is random
-function getKeyColor(keyNumber) {
-    var colors = ["red", "green", "blue", "orange", "pink", "brown", "purple", "yellow"];
-    return colors[Math.floor(Math.random() * 7)];
-}
-
 function redraw(data, y_axis, svg, x , y, height) {
 	var x_var = Object.keys(data[0])[0], y_var = Object.keys(data[0])[1];
 
@@ -47,7 +41,7 @@ function redraw(data, y_axis, svg, x , y, height) {
 		.attr("y", function(d){ return y(d.value); })
 		.attr("width", x.bandwidth())
 		.attr("height", function(d){ return height - y(d.value); })
-		.attr("fill", function(d){ return getKeyColor(d.note); });
+		.attr("fill", function(d){ return getKeyColor(getKey(d.note)); });
 }
 
 function displayBars() {
