@@ -4,7 +4,7 @@ A colorful visual display driven by digital piano input.
 
 # Running locally
 
-Download Node and NPM
+Download Node and NPM. In this directory (/Synesthesia/), run
 
 $ npm install
 
