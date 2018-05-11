@@ -7,9 +7,11 @@ A colorful visual display driven by digital piano input.
 Download Node and NPM
 
 $ npm install
+
 $ node app.js
 
 Connect your MIDI input device to your computer
+
 In Chrome on that computer, go to 'http://localhost:3000'
 
 # Ideas and directions
