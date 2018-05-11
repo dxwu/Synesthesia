@@ -27,4 +27,4 @@ function registerMidiListener() {
 	});
 }
 
-//registerMidiListener();
+registerMidiListener();
