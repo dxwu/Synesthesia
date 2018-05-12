@@ -1,8 +1,33 @@
+/*
+0 4 7 - major 
+0 4 7 11 - major seventh
+0 3 7 - minor
+0 3 7 10 - minor seventh
+0 3 6 - diminished
+0 3 6 (9) - diminished 9
+0 4 8 - augmented
+0 4 7 10 - dominant seventh
+0 4 7 9 - major sixth
+0 3 7 9 - minor sixth
+*/
+
 var keys = new Set();
+
+// notes -> name
+var chords = {};
+
+// chord -> color
+var sessionChordColors = {};
+
+var mostRecentChord;
+
 const MIDI_LOW_A = 21;
 
 // do some testing with this
 const BROWSER_REFRESH_MINIMUM_MS = 20;
+
+// do some testing with this
+const CHORD_ANALYSIS_MINIMUM_SIZE = 3;
 
 function registerMidiListener() {
 	WebMidi.enable(function (err) {
@@ -33,15 +58,93 @@ function registerMidiListener() {
 	});
 }
 
+// sort, remove duplicates, and bring into 0-12 range
+function normalize(notes) {
+	var result = new Set();
+
+	notes.forEach(function(element) {
+		if (element >= 12) {
+			element = element % 12;
+		}
+
+		result.add(element);
+	});
+
+	return Array.from(result).sort();
+}
+
+// generate a chord object (name, notes) given a starting note
+// and instructions for generating the chord
+function generateChord(start, instructions, name) {
+	instructions = instructions.map(n => start + n);
+	return {'name': name, 'notes': normalize(instructions)};
+}
+
+function addChord(chord) {
+	if (chord.notes in chords) {
+		chords[chord.notes].push(chord.name);
+	} else {
+		chords[chord.notes] = [chord.name];
+	}
+}
+
+function getChords() {
+	for (startingNote=0; startingNote<12; startingNote++) {
+		addChord(generateChord(startingNote, [0, 4, 7], getKey(startingNote) + ' major'));
+		addChord(generateChord(startingNote, [0, 4, 7, 11], getKey(startingNote) + ' major seventh'));
+		addChord(generateChord(startingNote, [0, 3, 7], getKey(startingNote) + ' minor'));
+		addChord(generateChord(startingNote, [0, 3, 7, 10], getKey(startingNote) + ' minor seventh'));
+		addChord(generateChord(startingNote, [0, 3, 6], getKey(startingNote) + ' diminished'));
+		addChord(generateChord(startingNote, [0, 3, 6, 9], getKey(startingNote) + ' dimished 9'));
+		addChord(generateChord(startingNote, [0, 4, 8], getKey(startingNote) + ' augmented'));
+		addChord(generateChord(startingNote, [0, 4, 7, 10], getKey(startingNote) + ' dominant seventh'));
+		addChord(generateChord(startingNote, [0, 4, 7, 9], getKey(startingNote) + ' major sixth'));
+		addChord(generateChord(startingNote, [0, 3, 7, 9], getKey(startingNote) + ' minor sixth'));
+	}
+}
+
+function initializeRandomChordColors() {
+	for (var key in chords) {
+		var name = chords[key];
+		sessionChordColors[name] = getRandomColor();
+	}
+}
+
 function analyzeKeys() {
 	setInterval(function() {
-		if (keys.size >= 3) {
-			// do chord analysis here
-			console.log('keys', keys);
+		if (keys.size >= CHORD_ANALYSIS_MINIMUM_SIZE) {
+			var candidate = normalize(keys);
 
+			if (candidate in chords) {
+				var chordName = chords[candidate];
+				if (mostRecentChord === chordName) {
+					return;
+				}
+
+				displayChord(chordName);
+				mostRecentChord = chordName;
+			}
 		}
-	}, 1000);
+	}, BROWSER_REFRESH_MINIMUM_MS);
+}
+
+function getChordColor(chordName) {
+	return sessionChordColors[chordName];
+}
+
+function displayChord(chordName) {
+	// text
+	// var display = document.createElement('p');
+	// display.textContent = chordName;
+	// document.getElementById('chordInformation').appendChild(display);
+
+	// color
+	document.body.style.backgroundColor = getChordColor(chordName);
+
+	// lights
 }
 
 registerMidiListener();
+getChords();
+initializeRandomChordColors();
 analyzeKeys();
