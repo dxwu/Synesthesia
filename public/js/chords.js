@@ -24,9 +24,6 @@ var mostRecentChord;
 const MIDI_LOW_A = 21;
 
 // do some testing with this
-const BROWSER_REFRESH_MINIMUM_MS = 20;
-
-// do some testing with this
 const CHORD_ANALYSIS_MINIMUM_SIZE = 3;
 
 function registerMidiListener() {
@@ -46,6 +43,7 @@ function registerMidiListener() {
 			function (e) {
 				var keyNumber = e.note.number-MIDI_LOW_A;
 				keys.add(keyNumber);
+				analyzeKeys();
 			}
 		);
 
@@ -111,24 +109,30 @@ function initializeRandomChordColors() {
 }
 
 function analyzeKeys() {
-	setInterval(function() {
-		if (keys.size >= CHORD_ANALYSIS_MINIMUM_SIZE) {
-			var candidate = normalize(keys);
+	if (keys.size >= CHORD_ANALYSIS_MINIMUM_SIZE) {
+		var candidate = normalize(keys);
+		var chordName = "";
 
-			if (candidate in chords) {
-				var chordName = chords[candidate];
-				if (mostRecentChord === chordName) {
-					return;
-				}
-
-				displayChord(chordName);
-				mostRecentChord = chordName;
-			}
+		if (candidate in chords) {
+			chordName = chords[candidate];
+		} else {
+			chordName = candidate.join('-');
 		}
-	}, BROWSER_REFRESH_MINIMUM_MS);
+
+		if (mostRecentChord === chordName) {
+			return;
+		}
+
+		displayChord(chordName);
+		mostRecentChord = chordName;
+	}
 }
 
 function getChordColor(chordName) {
+	if (!(chordName in sessionChordColors)) {
+		sessionChordColors[chordName] = getRandomColor();
+	}
+
 	return sessionChordColors[chordName];
 }
 
@@ -144,7 +148,6 @@ function displayChord(chordName) {
 	// lights
 }
 
-registerMidiListener();
 getChords();
 initializeRandomChordColors();
-analyzeKeys();
+registerMidiListener();
