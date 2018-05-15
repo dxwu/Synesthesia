@@ -10,9 +10,23 @@ $ npm install
 
 $ node app.js
 
+You can use the node server machine as the midi input device, or another computer. 
+
+## Using the server as the MIDI input device
+
 Connect your MIDI input device to your computer
 
-In Chrome on that computer, go to 'http://localhost:3000'
+Go to 'http://localhost:3000'
+
+## Using another machine as the MIDI input device
+
+Connect your MIDI input device to you machine (computer, phone, etc). You can find the IP address of your server by typing `ipconfig` on the server machine.
+
+Go to 'http://<IP address of your server>:3000/'.
+
+# Adding Philips Hue bulbs
+
+More to come soon.
 
 # Modes
 

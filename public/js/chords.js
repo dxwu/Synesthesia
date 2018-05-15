@@ -142,10 +142,14 @@ function displayChord(chordName) {
 	// display.textContent = chordName;
 	// document.getElementById('chordInformation').appendChild(display);
 
-	// color
-	document.body.style.backgroundColor = getChordColor(chordName);
+	var color = getChordColor(chordName);
+
+	// display
+	document.body.style.backgroundColor = color;
 
 	// lights
+	// TODO: control brightness from midi velocity
+	changeLight(getHueColor(color), 254);
 }
 
 getChords();
