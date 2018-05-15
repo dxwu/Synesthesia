@@ -137,10 +137,7 @@ function getChordColor(chordName) {
 }
 
 function displayChord(chordName) {
-	// text
-	// var display = document.createElement('p');
-	// display.textContent = chordName;
-	// document.getElementById('chordInformation').appendChild(display);
+	// console.log('chord', chordName);
 
 	var color = getChordColor(chordName);
 
