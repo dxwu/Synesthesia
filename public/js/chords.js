@@ -21,10 +21,12 @@ var sessionChordColors = {};
 
 var mostRecentChord;
 
-const MIDI_LOW_A = 21;
+var recentVelocities = [];
 
-// do some testing with this
+const MIDI_LOW_A = 21;
 const CHORD_ANALYSIS_MINIMUM_SIZE = 3;
+const MIDI_MAX_RAW_VELOCIY = 127;
+
 
 function registerMidiListener() {
 	WebMidi.enable(function (err) {
@@ -43,6 +45,7 @@ function registerMidiListener() {
 			function (e) {
 				var keyNumber = e.note.number-MIDI_LOW_A;
 				keys.add(keyNumber);
+				recentVelocities.push(e.rawVelocity);
 				analyzeKeys();
 			}
 		);
@@ -51,6 +54,7 @@ function registerMidiListener() {
 			function (e) {
 				var keyNumber = e.note.number-MIDI_LOW_A;
 				keys.delete(keyNumber);
+				recentVelocities.shift();
 			}
 		);
 	});
@@ -136,17 +140,22 @@ function getChordColor(chordName) {
 	return sessionChordColors[chordName];
 }
 
+function add(a,b) {
+	return a + b;
+}
+
 function displayChord(chordName) {
 	// console.log('chord', chordName);
 
 	var color = getChordColor(chordName);
+	var chordVolume = recentVelocities.reduce(add, 0) / recentVelocities.size;
+	var chordVolumePercent = chordVolume / MIDI_MAX_RAW_VELOCIY;
 
 	// display
 	document.body.style.backgroundColor = color;
 
 	// lights
-	// TODO: control brightness from midi velocity
-	changeLight(getHueColor(color), 254);
+	changeLight(getHueColor(color), chordVolumePercent);
 }
 
 getChords();
