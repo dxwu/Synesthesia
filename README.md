@@ -29,6 +29,7 @@ You can find the IP address of your server by typing `ipconfig` on the server ma
 # Adding Philips Hue bulbs
 
 More to come soon.
+The latency of a v2 bridge connected color bulb is around 70ms.
 
 # Modes
 
@@ -40,7 +41,7 @@ Creates a minimalitic browser based visualization of a keyboard (notes are repre
 
 ## Chord Analysis
 
-https://localhost:3000/lights
+http://localhost:3000/lights
 
 Shows different colors based on chords you play.
 

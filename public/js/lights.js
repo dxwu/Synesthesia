@@ -9,7 +9,7 @@ function hexToRgb(hex) {
         r: parseInt(result[1], 16),
         g: parseInt(result[2], 16),
         b: parseInt(result[3], 16)
-    } : {0,0,0};
+    } : {r:0, g:0, b:0};
 }
 
 // See https://developers.meethue.com/documentation/color-conversions-rgb-xy
@@ -47,26 +47,17 @@ function getHueColor(hex) {
 }
 
 function getAbsBrightness(percent) {
-	return parseInt(precent * HUE_ABS_BRIGHTNESS);
+	return parseInt(percent * HUE_ABS_BRIGHTNESS);
 }
 
 function createRestCall(url) {
 	var xhttp = new XMLHttpRequest();
     xhttp.open("PUT", url, true);
-
-    //TODO: do we need this?
-    xhttp.setRequestHeader("Content-type", "application/json");
     return xhttp;
 }
 
 function changeLight(cie, percentBrightness) {
 	var absBrightness = getAbsBrightness(percentBrightness);
-	// var body = '{\
-	// 				\"transitiontime\":0, \
-	// 				\"xy\":[' + cie[0] + ',' + cie[1] + '], \
-	// 				\"bri\": ' + absBrightness + '\
-	// 			}';
-
 	var body = `{
 					"transitiontime": 0,
 					"xy": [${cie[0]}, ${cie[1]}],

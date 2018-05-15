@@ -140,22 +140,24 @@ function getChordColor(chordName) {
 	return sessionChordColors[chordName];
 }
 
-function add(a,b) {
-	return a + b;
+function getChordVolumePercentage() {
+	var sumVelocity = 0;
+	recentVelocities.forEach(function(e) {
+		sumVelocity += e;
+	});
+	return (sumVelocity / recentVelocities.length) / MIDI_MAX_RAW_VELOCIY;
 }
 
 function displayChord(chordName) {
 	// console.log('chord', chordName);
 
 	var color = getChordColor(chordName);
-	var chordVolume = recentVelocities.reduce(add, 0) / recentVelocities.size;
-	var chordVolumePercent = chordVolume / MIDI_MAX_RAW_VELOCIY;
 
 	// display
 	document.body.style.backgroundColor = color;
 
 	// lights
-	changeLight(getHueColor(color), chordVolumePercent);
+	changeLight(getHueColor(color), getChordVolumePercentage());
 }
 
 getChords();
