@@ -61,11 +61,17 @@ function createRestCall(url) {
 
 function changeLight(cie, percentBrightness) {
 	var absBrightness = getAbsBrightness(percentBrightness);
-	var body = '{\
-					\"transitiontime\":0, \
-					\"xy\":[' + cie[0] + ',' + cie[1] + '], \
-					\"bri\": ' + absBrightness + '\
-				}';
+	// var body = '{\
+	// 				\"transitiontime\":0, \
+	// 				\"xy\":[' + cie[0] + ',' + cie[1] + '], \
+	// 				\"bri\": ' + absBrightness + '\
+	// 			}';
+
+	var body = `{
+					"transitiontime": 0,
+					"xy": [${cie[0]}, ${cie[1]}],
+					"bri": ${absBrightness}
+				}`;
 	var request = createRestCall(lightUrl);
 	request.send(body);
 }
