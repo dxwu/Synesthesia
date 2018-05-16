@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.3",
+    "request": "^2.86.0",
     "webmidi": "^2.0.5"
   }
 }

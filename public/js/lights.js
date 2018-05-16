@@ -1,7 +1,14 @@
-// TODO: get this programmatically
+
+// TODO: get URL programatically
 const lightUrl = "http://192.168.1.15/api/fV394S8DUm6Q0bIf3BQ27Ym7o8b7FnPhgVKQUgNV/lights/1/state";
 
 const HUE_ABS_BRIGHTNESS = 254;
+
+const HUE_USER = getHueUser();
+
+function getHueUser() {
+
+}
 
 function hexToRgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);

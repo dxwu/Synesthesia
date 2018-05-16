@@ -19,8 +19,6 @@ var chords = {};
 // chord -> color
 var sessionChordColors = {};
 
-var mostRecentChord;
-
 var recentVelocities = [];
 
 const MIDI_LOW_A = 21;
@@ -123,12 +121,7 @@ function analyzeKeys() {
 			chordName = candidate.join('-');
 		}
 
-		if (mostRecentChord === chordName) {
-			return;
-		}
-
 		displayChord(chordName);
-		mostRecentChord = chordName;
 	}
 }
 
