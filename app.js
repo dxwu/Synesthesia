@@ -4,7 +4,6 @@ var path = require('path');
 var fs = require('fs')
 var request = require('request');
 
-
 const hueUserPath = './hue_username.txt';
 const hueWaitingUserInput = 'waiting';
 
@@ -27,13 +26,24 @@ app.get('/lights', function (req, res) {
   res.sendFile(path.join(__dirname + '/public/html/lights.html'));
 });
 
-// Parse local text file for hue username. If none exist, tell the client to 
-// press the button on their hue bridge.
+// Returns the IP address of the Hue bridge
+app.get('/api/bridgeaddress', function (req, res) {
+
+});
+
+// Returns all lights that support color changing
+app.get('/api/colorlights', function (req, res) {
+
+});
+
+// Call this endpoint to get the hue username. This parses a 
+// local text file for hue username. If none exist, tell the client to 
+// press the button on their hue bridge. THen call /api/createhueuser
 app.get('/api/hueuser', function (req, res) {
 	if (!fs.existsSync(hueUserPath)) {
 		fs.writeFile(hueUserPath, hueWaitingUserInput, { flag: 'wx' }, function (err) {
 		    if (err) {
-		    	res.status(500).send('Error writting to ' + hueUserPath);
+		    	res.status(500).send('Error writing to ' + hueUserPath);
 		    	return;
 		    }
 
@@ -54,7 +64,7 @@ app.get('/api/hueuser', function (req, res) {
 
 // After the client pressed the button on their hue bridge,
 // call this endpoint to get the username and write to a file to save for next time
-app.get('/api/firsttimehueuser', function (req, res) {
+app.get('/api/createhueuser', function (req, res) {
 	if (!fs.existsSync(hueUserPath)) {
 		res.status(500).send(hueUserPath + ' does not exist');
 		return;
@@ -79,7 +89,7 @@ app.get('/api/firsttimehueuser', function (req, res) {
 
 			fs.writeFile(hueUserPath, body[0].success.username, function (err) {
 			    if (err) {
-			    	res.status(500).send('Error writting to ' + hueUserPath);
+			    	res.status(500).send('Error writing to ' + hueUserPath);
 			    	return;
 			    }
 
@@ -106,5 +116,5 @@ function registerHueUser(callback) {
 }
 
 app.listen(3000, function () {
-  console.log('App listening on port 3000!');
+	console.log('App listening on port 3000!');
 });
