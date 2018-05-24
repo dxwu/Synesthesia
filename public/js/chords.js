@@ -153,6 +153,9 @@ function displayChord(chordName) {
 	changeLight(getHueColor(color), getChordVolumePercentage());
 }
 
+getBridgeUrl();
+getBridgeUser();
+getColorLights();
 getChords();
 initializeRandomChordColors();
 registerMidiListener();

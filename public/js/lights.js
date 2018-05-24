@@ -1,13 +1,55 @@
-
-// TODO: get bridge URL, light number programatically
-const bridgeUrl = "http://192.168.1.15/api/fV394S8DUm6Q0bIf3BQ27Ym7o8b7FnPhgVKQUgNV/lights/1/state";
-
+const serverUrl = window.location.protocol + '//' + window.location.host;
 const HUE_ABS_BRIGHTNESS = 254;
 
-const HUE_USER = getHueUser();
+var bridgeIp = "";
+var bridgeUser = "";
+var colorLights = [];
 
-function getHueUser() {
+function createRestCall(url, method) {
+	var xhttp = new XMLHttpRequest();
+    xhttp.open(method, url, true);
+    return xhttp;
+}
 
+function getBridgeUrl() {
+	var request = createRestCall(serverUrl + '/api/bridgeaddress', "GET");
+	request.onreadystatechange = function() {
+	    if (request.readyState == XMLHttpRequest.DONE) {
+        	bridgeIp = request.responseText;
+	    }
+	}
+
+	request.send();
+}
+
+function getBridgeUser() {
+	var request = createRestCall(serverUrl + '/api/hueuser', "GET");
+	request.onreadystatechange = function() {
+	    if (request.readyState == XMLHttpRequest.DONE) {
+        	bridgeUser = request.responseText;
+	    }
+	}
+
+	request.send();
+}
+
+function getColorLights() {
+	var request = createRestCall(serverUrl + '/api/colorlights', "GET");
+	request.onreadystatechange = function() {
+	    if (request.readyState == XMLHttpRequest.DONE) {
+        	colorLights = JSON.parse(request.responseText);
+	    }
+	}
+
+	request.send();
+}
+
+function getChangeLightUrls() {
+	var urls = [];
+	colorLights.forEach(function(light) {
+		urls.push(`http://${bridgeIp}/api/${bridgeUser}/lights/${light}/state`)
+	});
+	return urls;
 }
 
 function hexToRgb(hex) {
@@ -57,19 +99,17 @@ function getAbsBrightness(percent) {
 	return parseInt(percent * HUE_ABS_BRIGHTNESS);
 }
 
-function createRestCall(url) {
-	var xhttp = new XMLHttpRequest();
-    xhttp.open("PUT", url, true);
-    return xhttp;
-}
-
 function changeLight(cie, percentBrightness) {
 	var absBrightness = getAbsBrightness(percentBrightness);
 	var body = `{
+					"on": true,
 					"transitiontime": 0,
 					"xy": [${cie[0]}, ${cie[1]}],
 					"bri": ${absBrightness}
 				}`;
-	var request = createRestCall(bridgeUrl);
-	request.send(body);
+
+	getChangeLightUrls().forEach(function(light) {
+		var request = createRestCall(light, "PUT");
+		request.send(body);
+	});
 }

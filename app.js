@@ -7,6 +7,9 @@ var request = require('request');
 const hueUserPath = './hue_username.txt';
 const hueWaitingUserInput = 'waiting';
 
+var bridgeUrl = "";
+var bridgeUser = "";
+
 app.use(express.static(__dirname + '/public'));
 app.use('/scripts', express.static(__dirname + '/node_modules/webmidi/'));
 
@@ -28,12 +31,33 @@ app.get('/lights', function (req, res) {
 
 // Returns the IP address of the Hue bridge
 app.get('/api/bridgeaddress', function (req, res) {
-
+	res.send(bridgeUrl);
 });
 
 // Returns all lights that support color changing
 app.get('/api/colorlights', function (req, res) {
+	request({
+			url: 'http://' + bridgeUrl + '/api/' + bridgeUser + '/lights',
+    		method: "GET",
+    		json: true
+		},
+		(err, response, lights) => {
+			if (err) { 
+				res.status(500).send('Error requesting colored lights');
+				return;
+			}
 
+			var colorLights = [];
+			if (lights) {
+				for (var light = 1; light <= Object.keys(lights).length; light++) {
+					if (lights[light].type === 'Extended color light') {
+						colorLights.push(light);
+					}
+				}
+			}
+
+			res.send(colorLights);
+		});
 });
 
 // Call this endpoint to get the hue username. This parses a 
@@ -99,22 +123,63 @@ app.get('/api/createhueuser', function (req, res) {
 	});
 });
 
+function getBridgeUser(callback) {
+	if (!fs.existsSync(hueUserPath)) {
+		return "";
+	} 
+
+	fs.readFile(hueUserPath, 'utf8', function(err, data) {
+		if (err) {
+	    	return "";
+		}
+
+		callback(data);
+	});
+}
+
+function getBridgeUrl(callback) {
+	request({
+				url: 'https://www.meethue.com/api/nupnp',
+	    		method: "GET",
+	    		json: true
+			},
+			(err, response, body) => {
+				if (err) { 
+					return;
+				}
+
+				if (!body || !body[0] || !body[0].internalipaddress) {
+					return;
+				}
+
+				callback(body[0].internalipaddress);
+			});
+}
+
 function registerHueUser(callback) {
 	request({
-				url: 'http://192.168.1.15/api/',
+				url: bridgeUrl + '/api/',
 	    		method: "POST",
 	    		json: {
     				"devicetype": "my_hue_app#dwu"
 	    		}
     		},
-    		(err, res, body) => {
+    		(err, response, body) => {
 				if (err) { 
 					return console.log(err); 
 				}
 				callback(body);
-	});
+			});
 }
 
 app.listen(3000, function () {
+	getBridgeUrl(function(url) {
+		bridgeUrl = url;
+	});
+
+	getBridgeUser(function(user) {
+		bridgeUser = user;
+	});
+
 	console.log('App listening on port 3000!');
 });

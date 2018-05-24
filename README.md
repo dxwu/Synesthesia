@@ -30,7 +30,7 @@ You can find the IP address of your server by typing `ipconfig` on the server ma
 
 First make sure your bridge is connected to your network and is functioning properly. Test that the smartphone app can control the lights on the same network.
 More to come soon.
-The latency of a V2 bridge connected color bulb is around 70ms. V2 bridge and above recommended.
+The latency of a V2 bridge connected color bulb is around 70ms. V2 bridge and above recommended (V1 bridges are circular in shape, V2 bridges are square in shape with a circular physical button).
 
 # Modes
 
