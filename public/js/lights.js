@@ -1,6 +1,6 @@
 
-// TODO: get URL programatically
-const lightUrl = "http://192.168.1.15/api/fV394S8DUm6Q0bIf3BQ27Ym7o8b7FnPhgVKQUgNV/lights/1/state";
+// TODO: get bridge URL, light number programatically
+const bridgeUrl = "http://192.168.1.15/api/fV394S8DUm6Q0bIf3BQ27Ym7o8b7FnPhgVKQUgNV/lights/1/state";
 
 const HUE_ABS_BRIGHTNESS = 254;
 
@@ -70,6 +70,6 @@ function changeLight(cie, percentBrightness) {
 					"xy": [${cie[0]}, ${cie[1]}],
 					"bri": ${absBrightness}
 				}`;
-	var request = createRestCall(lightUrl);
+	var request = createRestCall(bridgeUrl);
 	request.send(body);
 }

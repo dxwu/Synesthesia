@@ -28,8 +28,9 @@ You can find the IP address of your server by typing `ipconfig` on the server ma
 
 # Adding Philips Hue bulbs
 
+First make sure your bridge is connected to your network and is functioning properly. Test that the smartphone app can control the lights on the same network.
 More to come soon.
-The latency of a v2 bridge connected color bulb is around 70ms.
+The latency of a V2 bridge connected color bulb is around 70ms. V2 bridge and above recommended.
 
 # Modes
 
