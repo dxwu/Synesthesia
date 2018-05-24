@@ -73,7 +73,7 @@ app.get('/api/firsttimehueuser', function (req, res) {
 
 		registerHueUser(function(body) {
 			if (!body || !body[0] || !body[0].success || !body[0].success.username) {
-				res.status(500).send('Error creating hue user');
+				res.status(500).send('Error creating hue user. Are you sure you pressed the button on the Hue Bridge?');
 				return;
 			}
 
