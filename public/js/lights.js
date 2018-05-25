@@ -4,6 +4,7 @@ const HUE_ABS_BRIGHTNESS = 254;
 var bridgeIp = "";
 var bridgeUser = "";
 var colorLights = [];
+var numLights = -1;
 
 function createRestCall(url, method) {
 	var xhttp = new XMLHttpRequest();
@@ -38,6 +39,8 @@ function getColorLights() {
 	request.onreadystatechange = function() {
 	    if (request.readyState == XMLHttpRequest.DONE) {
         	colorLights = JSON.parse(request.responseText);
+        	numLights = colorLights.length;
+        	initializeRandomChordColors();
 	    }
 	}
 
@@ -99,17 +102,37 @@ function getAbsBrightness(percent) {
 	return parseInt(percent * HUE_ABS_BRIGHTNESS);
 }
 
-function changeLight(cie, percentBrightness) {
-	var absBrightness = getAbsBrightness(percentBrightness);
-	var body = `{
-					"on": true,
-					"transitiontime": 0,
-					"xy": [${cie[0]}, ${cie[1]}],
-					"bri": ${absBrightness}
-				}`;
+// There is a slight lag between changing the color of one lamp
+// to changing the color of another. This tries to switch up the 
+// "slower" lamp every so often
+function getRandomDirection() {
+	return (new Date().getTime() % 2) == 0;
+}
 
-	getChangeLightUrls().forEach(function(light) {
-		var request = createRestCall(light, "PUT");
-		request.send(body);
-	});
+function changeLight(cies, percentBrightness) {
+	var absBrightness = getAbsBrightness(percentBrightness);
+	var lightUrls = getChangeLightUrls();
+	var requests = [];
+
+	for (var light = 0; light < numLights; light++) {
+		var body = `{
+						"on": true,
+						"transitiontime": 1,
+						"xy": [${cies[light][0]}, ${cies[light][1]}],
+						"bri": ${absBrightness}
+					}`;
+		requests.push({call: createRestCall(lightUrls[light], "PUT"), body: body});
+	}
+
+	if (getRandomDirection()) {
+		for (var r = 0; r < requests.length; r++) {
+			var request = requests[r];
+			request.call.send(request.body);
+		}
+	} else {
+		for (var r = requests.length-1; r >= 0; r--) {
+			var request = requests[r];
+			request.call.send(request.body);
+		}
+	}
 }

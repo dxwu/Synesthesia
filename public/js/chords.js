@@ -103,17 +103,14 @@ function getChords() {
 	}
 }
 
-function initializeRandomChordColors() {
-	for (var key in chords) {
-		var name = chords[key];
-		sessionChordColors[name] = getRandomColor();
-	}
-}
-
 function analyzeKeys() {
 	if (keys.size >= CHORD_ANALYSIS_MINIMUM_SIZE) {
 		var candidate = normalize(keys);
 		var chordName = "";
+
+		if (candidate.length < CHORD_ANALYSIS_MINIMUM_SIZE) {
+			return;
+		}
 
 		if (candidate in chords) {
 			chordName = chords[candidate];
@@ -125,9 +122,24 @@ function analyzeKeys() {
 	}
 }
 
+function getNewColors() {
+	var colors = [];
+	for (var color = 0; color < numLights; color++) {
+		colors.push(getRandomColor());
+	}
+	return colors;
+}
+
+function initializeRandomChordColors() {
+	for (var key in chords) {
+		var name = chords[key];
+		sessionChordColors[name] = getNewColors();
+	}
+}
+
 function getChordColor(chordName) {
 	if (!(chordName in sessionChordColors)) {
-		sessionChordColors[chordName] = getRandomColor();
+		sessionChordColors[chordName] = getNewColors();
 	}
 
 	return sessionChordColors[chordName];
@@ -142,20 +154,24 @@ function getChordVolumePercentage() {
 }
 
 function displayChord(chordName) {
-	// console.log('chord', chordName);
+	//console.log('chord', chordName);
 
-	var color = getChordColor(chordName);
+	var colors = getChordColor(chordName);
 
 	// display
-	document.body.style.backgroundColor = color;
+	document.body.style.backgroundColor = colors[0];
 
 	// lights
-	changeLight(getHueColor(color), getChordVolumePercentage());
+	var colorCies = [];
+	colors.forEach(function(color) {
+		colorCies.push(getHueColor(color));
+	});
+
+	changeLight(colorCies, getChordVolumePercentage());
 }
 
 getBridgeUrl();
 getBridgeUser();
 getColorLights();
 getChords();
-initializeRandomChordColors();
 registerMidiListener();
