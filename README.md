@@ -10,6 +10,8 @@ This project uses Google Chrome's built-in MIDI input driver to interface with a
 
 The web app is written with Node.js + Express for the serverside, and plain Javascript for the clientside. Communication with the Philips Hue bulbs is done with REST calls from both the server and client. 
 
+![alt text](https://raw.githubusercontent.comdxwu/Synesthesia/master/images/LightShow.png)
+
 # Demo
 
 -Youtube Link-
