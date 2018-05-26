@@ -12,7 +12,7 @@ This project uses Google Chrome's built-in MIDI input driver as a cross-platform
 
 # Demo
 
--Youtube Link-
+https://www.youtube.com/watch?v=cDrFB9JBSgA
 
 # Running locally
 
