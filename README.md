@@ -4,11 +4,9 @@ A colorful visual display driven by digital piano input.
 
 # How it works
 
-Digital instruments like pianos can output data about what notes are being played. This data is called MIDI. Using MIDI data as input, we can process and analyze the notes being played in real-time on a computer or smartphone. The processor can show colorful displays based on what notes are being played. By connecting the processor with Philips Hue colored light bulbs, which can be controlled over your local wifi network, the colorful displays take on a new dimension. 
+Digital instruments like pianos can output data about what notes are being played. This data is called MIDI. Using MIDI data as input, we can process and analyze the notes being played in real-time on a computer or smartphone. This data is then used to drive colorful displays. By combining musical data and Philips Hue colored light bulbs, which can be controlled over your local wifi network, the colorful displays take on a new dimension.
 
-This project uses Google Chrome's built-in MIDI input driver to interface with a MIDI instrument, and includes a web app that acts as the processor and light driver. Using a web app running in Chrome is the ultimate cross-platform solution that lets your run the serverside on your laptop in one room, and connect your smartphone running the client to your MIDI instrument.
-
-The web app is written with Node.js + Express for the serverside, and plain Javascript for the clientside. Communication with the Philips Hue bulbs is done with REST calls from both the server and client. 
+This project uses Google Chrome's built-in MIDI input driver as a cross-platform MIDI interface, and includes a web app that acts as the processor and light driver. The web app is written with Node.js, Express, and client-side javascript. Communication with the Philips Hue bulbs is done with REST calls from both the server and client. 
 
 ![alt tag](./images/LightShow2.png?raw=true)
 
