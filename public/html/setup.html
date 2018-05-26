@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <script src="scripts/webmidi.min.js"></script>
+    <script src="js/setup.js"></script>
+  </head>
+
+  <body>
+
+    <p>1. Ensure that you're visiting this site with an update-to-date version of Google Chrome.</p>
+
+    <p>2. Connect your MIDI instrument to this computer.</p>
+
+    <p>3. Make sure the Philips Hue lights are connected to your Philips Hue Bridge and can be controlled by your Philips Hue smartphone app. Ideally, use a V2 Bridge (square shaped with a circular button).</p>
+
+    <p style='visibility:hidden' id="noUser">We need to do a one time Philips Hue setup so that this app can talk to your Philips Hue lights. Please press the button on your Philips Hue Bridge. After you've pressed the button, click "Next" below.</p>
+
+    <button style='visibility:hidden' id="setupUserButton" type="button" onclick="onHueBridgeButtonPressed()">Next</button>
+
+    <p style='visibility:hidden' id="hasUser">This app has been set up to talk to your Philips Hue bulbs.</p>
+
+    <button style='visibility:hidden' id="startButton" type="button" onclick="onStartPressed()">Start</button>
+
+    <div id="setupError"></div>
+
+    <br/>
+    <br/>
+    <br/>
+
+    <p style='visibility:hidden' id="midiOn">MIDI status: ON</p>
+    <p style='visibility:hidden' id="midiOff">MIDI status: OFF</p>
+
+    <p id="numLights">Number of Philips Hue Color Lights: </p>
+  </body>
+
+</html>

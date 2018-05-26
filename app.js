@@ -29,6 +29,14 @@ app.get('/lights', function (req, res) {
   res.sendFile(path.join(__dirname + '/public/html/lights.html'));
 });
 
+app.get('/setup', function (req, res) {
+  res.sendFile(path.join(__dirname + '/public/html/setup.html'));
+});
+
+app.get('/about', function (req, res) {
+  res.sendFile(path.join(__dirname + '/public/html/about.html'));
+});
+
 // Returns the IP address of the Hue bridge
 app.get('/api/bridgeaddress', function (req, res) {
 	res.send(bridgeUrl);
@@ -90,7 +98,7 @@ app.get('/api/hueuser', function (req, res) {
 // call this endpoint to get the username and write to a file to save for next time
 app.get('/api/createhueuser', function (req, res) {
 	if (!fs.existsSync(hueUserPath)) {
-		res.status(500).send(hueUserPath + ' does not exist');
+		res.status(500).send('Error, ' + hueUserPath + ' does not exist');
 		return;
 	}
 
@@ -101,13 +109,13 @@ app.get('/api/createhueuser', function (req, res) {
 		}
 
 		if (!data.includes(hueWaitingUserInput)) {
-			res.status(500).send(hueUserPath + ' is not in the correct format');
+			res.status(500).send('Error, ' + hueUserPath + ' is not in the correct format');
 			return;
 		}
 
 		registerHueUser(function(body) {
 			if (!body || !body[0] || !body[0].success || !body[0].success.username) {
-				res.status(500).send('Error creating hue user. Are you sure you pressed the button on the Hue Bridge?');
+				res.status(400).send('Error creating hue user. Are you sure you pressed the button on the Hue Bridge?');
 				return;
 			}
 
@@ -158,7 +166,7 @@ function getBridgeUrl(callback) {
 
 function registerHueUser(callback) {
 	request({
-				url: bridgeUrl + '/api/',
+				url: 'http://' + bridgeUrl + '/api/',
 	    		method: "POST",
 	    		json: {
     				"devicetype": "my_hue_app#dwu"

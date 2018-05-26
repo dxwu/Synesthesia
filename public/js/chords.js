@@ -25,6 +25,7 @@ const MIDI_LOW_A = 21;
 const CHORD_ANALYSIS_MINIMUM_SIZE = 3;
 const MIDI_MAX_RAW_VELOCIY = 127;
 
+var playing = false;
 
 function registerMidiListener() {
 	WebMidi.enable(function (err) {
@@ -41,6 +42,8 @@ function registerMidiListener() {
 
 		input.addListener('noteon', "all",
 			function (e) {
+				removeStartMessage();
+
 				var keyNumber = e.note.number-MIDI_LOW_A;
 				keys.add(keyNumber);
 				recentVelocities.push(e.rawVelocity);
@@ -168,6 +171,15 @@ function displayChord(chordName) {
 	});
 
 	changeLight(colorCies, getChordVolumePercentage());
+}
+
+function removeStartMessage() {
+	if (playing) {
+		return;
+	}
+
+	document.getElementById('startMessage').style.visibility  = 'hidden'; 
+	playing = true;
 }
 
 getBridgeUrl();
