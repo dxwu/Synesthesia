@@ -6,19 +6,15 @@ var request = require('request');
 
 const hueUserPath = './hue_username.txt';
 const hueWaitingUserInput = 'waiting';
-
 var bridgeUrl = "";
 var bridgeUser = "";
 
 app.use(express.static(__dirname + '/public'));
 app.use('/scripts', express.static(__dirname + '/node_modules/webmidi/'));
 
+// serve html files
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname + '/public/html/index.html'));
-});
-
-app.get('/grid', function (req, res) {
-  res.sendFile(path.join(__dirname + '/public/html/grid.html'));
 });
 
 app.get('/keys', function (req, res) {
@@ -164,6 +160,8 @@ function getBridgeUrl(callback) {
 			});
 }
 
+// Tries to create a new hue user. If the creation is successful,
+// returns that use to the callback
 function registerHueUser(callback) {
 	request({
 				url: 'http://' + bridgeUrl + '/api/',
@@ -189,5 +187,5 @@ app.listen(3000, function () {
 		bridgeUser = user;
 	});
 
-	console.log('App listening on port 3000!');
+	console.log('Synesthesia listening on port 3000!');
 });

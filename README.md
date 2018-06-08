@@ -57,7 +57,3 @@ Creates a minimalitic browser based visualization of a keyboard (notes are repre
 http://localhost:3000/lights
 
 Shows different colors based on chords you play.
-
-# Ideas and directions
-
-1. Shows different colors based on the individual keys you press. The highest pitch pressed changes the color of 1 item (in the last 50ms to ignore trills).
