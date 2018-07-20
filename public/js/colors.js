@@ -1,3 +1,5 @@
+// Utility classes for colors
+
 function getKey(keyNumber) {
 	switch (keyNumber % 12) {
 		case 0: 
@@ -30,6 +32,7 @@ function getKey(keyNumber) {
 }
 
 // https://en.wikipedia.org/wiki/Clavier_%C3%A0_lumi%C3%A8res
+// Used for the piano visulization class
 function getKeyColor(key) {
 	if (key == 'c') {
 		return 'red';

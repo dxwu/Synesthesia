@@ -1,60 +1,21 @@
-var keys = [];
-for (i=0; i<=88; i++) {
-	keys.push({'note':i, 'value':0});
-}
+// Visual representation of a keyboard using a d3 bar chart
+// A digital representation of Scriabin's color keyboard
+// See images/G7_chart.png
 
 const HIDDEN_NOTE_NUMBER = 88;
 const MIDI_LOW_A = 21;
 const MIDI_MAX_RAW_VELOCIY = 127;
 
-// set y-axis max height, this key will be invisible and outside the normal piano range
+// Stores the piano keys used by the d3 visualization
+var keys = [];
+for (i=0; i<=88; i++) {
+	keys.push({'note':i, 'value':0});
+}
+
+// Set y-axis max height, this key will be invisible and outside the normal piano range
 keys[HIDDEN_NOTE_NUMBER].value = MIDI_MAX_RAW_VELOCIY - 27; 
 
-
-function setKeyValue(on, keyNumber, keyValue) {
-	if (on) {
-		keys[keyNumber - MIDI_LOW_A].value = keyValue;
-	} else {
-		keys[keyNumber - MIDI_LOW_A].value = 0;
-	}
-	return keys;
-}
-
-function redraw(data, y_axis, svg, x , y, height) {
-	var x_var = Object.keys(data[0])[0], y_var = Object.keys(data[0])[1];
-
-	// join
-	var bar = svg.selectAll(".bar")
-		.data(data, function(d) { return d.note; });
-
-	var amount = svg.selectAll(".amount")
-		.data(data, function(d) { return d.note; });
-
-	// update
-	bar.transition()
-		.duration(1)
-		.attr("y", function(d) { return y(d.value); })
-		.attr("height", function(d){ return height - y(d.value); });
-
-	amount.transition()
-		.duration(1)
-		.attr("y", function(d) { return y(d.value); });
-
-	// enter
-	bar.enter().append("rect")
-		.attr("class", "bar")
-		.attr("x", function(d) { return x(d.note); })
-		.attr("y", function(d) { return y(d.value); })
-		.attr("width", x.bandwidth())
-		.attr("height", function(d) { return height - y(d.value); })
-		.attr("fill", function(d) { 
-			if (d.note == HIDDEN_NOTE_NUMBER) {
-				return '#000000';	
-			}
-			return getKeyColor(getKey(d.note)); 
-		});
-}
-
+// Setup the d3 chart
 function displayBars() {
 	var domain = [];
 	for (i=0; i<=88; i++) {
@@ -90,6 +51,7 @@ function displayBars() {
 	registerMidiListener(y_axis, svg, x, y, height);
 }	
 
+// Listen to piano input, refresh the chart on every new key action
 function registerMidiListener(y_axis, svg, x, y, height) {
 	WebMidi.enable(function (err) {
 		if (err) {
@@ -115,6 +77,52 @@ function registerMidiListener(y_axis, svg, x, y, height) {
 			}
 		);
 	});
+}
+
+// Redraw the d3 chart
+function redraw(data, y_axis, svg, x , y, height) {
+	var x_var = Object.keys(data[0])[0], y_var = Object.keys(data[0])[1];
+
+	// join
+	var bar = svg.selectAll(".bar")
+		.data(data, function(d) { return d.note; });
+
+	var amount = svg.selectAll(".amount")
+		.data(data, function(d) { return d.note; });
+
+	// update
+	bar.transition()
+		.duration(1)
+		.attr("y", function(d) { return y(d.value); })
+		.attr("height", function(d){ return height - y(d.value); });
+
+	amount.transition()
+		.duration(1)
+		.attr("y", function(d) { return y(d.value); });
+
+	// enter
+	bar.enter().append("rect")
+		.attr("class", "bar")
+		.attr("x", function(d) { return x(d.note); })
+		.attr("y", function(d) { return y(d.value); })
+		.attr("width", x.bandwidth())
+		.attr("height", function(d) { return height - y(d.value); })
+		.attr("fill", function(d) { 
+			if (d.note == HIDDEN_NOTE_NUMBER) {
+				return '#000000';	
+			}
+			return getKeyColor(getKey(d.note)); 
+		});
+}
+
+// Transform the mini input to key number
+function setKeyValue(on, keyNumber, keyValue) {
+	if (on) {
+		keys[keyNumber - MIDI_LOW_A].value = keyValue;
+	} else {
+		keys[keyNumber - MIDI_LOW_A].value = 0;
+	}
+	return keys;
 }
 
 displayBars();

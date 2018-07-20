@@ -1,3 +1,6 @@
+// Philips Hue client, communicates with the server (app.js) and with
+// the Hue lights to display colors
+
 const serverUrl = window.location.protocol + '//' + window.location.host;
 const HUE_ABS_BRIGHTNESS = 254;
 
@@ -5,6 +8,37 @@ var bridgeIp = "";
 var bridgeUser = "";
 var colorLights = [];
 var numLights = -1;
+
+
+// Calls the Hue API to display colors based on the chord
+// and velocity of the MIDI input.
+function changeLight(cies, percentBrightness) {
+	var absBrightness = getAbsBrightness(percentBrightness);
+	var lightUrls = getChangeLightUrls();
+	var requests = [];
+
+	for (var light = 0; light < numLights; light++) {
+		var body = `{
+						"on": true,
+						"transitiontime": 1,
+						"xy": [${cies[light][0]}, ${cies[light][1]}],
+						"bri": ${absBrightness}
+					}`;
+		requests.push({call: createRestCall(lightUrls[light], "PUT"), body: body});
+	}
+
+	if (getRandomDirection()) {
+		for (var r = 0; r < requests.length; r++) {
+			var request = requests[r];
+			request.call.send(request.body);
+		}
+	} else {
+		for (var r = requests.length-1; r >= 0; r--) {
+			var request = requests[r];
+			request.call.send(request.body);
+		}
+	}
+}
 
 function createRestCall(url, method) {
 	var xhttp = new XMLHttpRequest();
@@ -93,6 +127,7 @@ function rgbToCie(red, green, blue)
 	return [x, y];
 }
 
+// The hue light API talks in CIE
 function getHueColor(hex) {
 	var rgb = hexToRgb(hex);
 	return rgbToCie(rgb.r, rgb.g, rgb.b);
@@ -107,32 +142,4 @@ function getAbsBrightness(percent) {
 // "slower" lamp every so often
 function getRandomDirection() {
 	return (new Date().getTime() % 2) == 0;
-}
-
-function changeLight(cies, percentBrightness) {
-	var absBrightness = getAbsBrightness(percentBrightness);
-	var lightUrls = getChangeLightUrls();
-	var requests = [];
-
-	for (var light = 0; light < numLights; light++) {
-		var body = `{
-						"on": true,
-						"transitiontime": 1,
-						"xy": [${cies[light][0]}, ${cies[light][1]}],
-						"bri": ${absBrightness}
-					}`;
-		requests.push({call: createRestCall(lightUrls[light], "PUT"), body: body});
-	}
-
-	if (getRandomDirection()) {
-		for (var r = 0; r < requests.length; r++) {
-			var request = requests[r];
-			request.call.send(request.body);
-		}
-	} else {
-		for (var r = requests.length-1; r >= 0; r--) {
-			var request = requests[r];
-			request.call.send(request.body);
-		}
-	}
 }

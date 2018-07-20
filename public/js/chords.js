@@ -1,16 +1,11 @@
-/*
-0 4 7 - major 
-0 4 7 11 - major seventh
-0 3 7 - minor
-0 3 7 10 - minor seventh
-0 3 6 - diminished
-0 3 6 (9) - diminished 9
-0 4 8 - augmented
-0 4 7 10 - dominant seventh
-0 4 7 9 - major sixth
-0 3 7 9 - minor sixth
-*/
+// Creates a light show based on piano chord input
+// Displays a distinct color for every chord. The colors are randomly
+// initialized on startup, but each chord corresponds to a specific color.
+// This extends to n hue lights. For example, if you have 2 hue lights,
+// the 'A' chord could show up as 'pink' and 'blue'. The 'D#7' chord could
+// show up as 'green' and 'orange'.
 
+// stores notes currently held down on piano
 var keys = new Set();
 
 // notes -> name
@@ -19,6 +14,7 @@ var chords = {};
 // chord -> color
 var sessionChordColors = {};
 
+// stores velocity of MIDI input to drive intensity of hue lights
 var recentVelocities = [];
 
 const MIDI_LOW_A = 21;
@@ -27,6 +23,7 @@ const MIDI_MAX_RAW_VELOCIY = 127;
 
 var playing = false;
 
+// Listen to MIDI input
 function registerMidiListener() {
 	WebMidi.enable(function (err) {
 		if (err) {
@@ -61,51 +58,7 @@ function registerMidiListener() {
 	});
 }
 
-// sort, remove duplicates, and bring into 0-12 range
-function normalize(notes) {
-	var result = new Set();
-
-	notes.forEach(function(element) {
-		if (element >= 12) {
-			element = element % 12;
-		}
-
-		result.add(element);
-	});
-
-	return Array.from(result).sort();
-}
-
-// generate a chord object (name, notes) given a starting note
-// and instructions for generating the chord
-function generateChord(start, instructions, name) {
-	instructions = instructions.map(n => start + n);
-	return {'name': name, 'notes': normalize(instructions)};
-}
-
-function addChord(chord) {
-	if (chord.notes in chords) {
-		chords[chord.notes].push(chord.name);
-	} else {
-		chords[chord.notes] = [chord.name];
-	}
-}
-
-function getChords() {
-	for (startingNote=0; startingNote<12; startingNote++) {
-		addChord(generateChord(startingNote, [0, 4, 7], getKey(startingNote) + ' major'));
-		addChord(generateChord(startingNote, [0, 4, 7, 11], getKey(startingNote) + ' major seventh'));
-		addChord(generateChord(startingNote, [0, 3, 7], getKey(startingNote) + ' minor'));
-		addChord(generateChord(startingNote, [0, 3, 7, 10], getKey(startingNote) + ' minor seventh'));
-		addChord(generateChord(startingNote, [0, 3, 6], getKey(startingNote) + ' diminished'));
-		addChord(generateChord(startingNote, [0, 3, 6, 9], getKey(startingNote) + ' dimished 9'));
-		addChord(generateChord(startingNote, [0, 4, 8], getKey(startingNote) + ' augmented'));
-		addChord(generateChord(startingNote, [0, 4, 7, 10], getKey(startingNote) + ' dominant seventh'));
-		addChord(generateChord(startingNote, [0, 4, 7, 9], getKey(startingNote) + ' major sixth'));
-		addChord(generateChord(startingNote, [0, 3, 7, 9], getKey(startingNote) + ' minor sixth'));
-	}
-}
-
+// Given a set of keys, find the chord that it matches to
 function analyzeKeys() {
 	if (keys.size >= CHORD_ANALYSIS_MINIMUM_SIZE) {
 		var candidate = normalize(keys);
@@ -125,6 +78,65 @@ function analyzeKeys() {
 	}
 }
 
+// Given a chord, sort, remove duplicates, and bring into 0-12 range
+function normalize(notes) {
+	var result = new Set();
+
+	notes.forEach(function(element) {
+		if (element >= 12) {
+			element = element % 12;
+		}
+
+		result.add(element);
+	});
+
+	return Array.from(result).sort();
+}
+
+// Generate a chord object (name, notes) given a starting note
+// and instructions for generating the chord
+function generateChord(start, instructions, name) {
+	instructions = instructions.map(n => start + n);
+	return {'name': name, 'notes': normalize(instructions)};
+}
+
+// Add a new chord to the set of chords already defined
+function addChord(chord) {
+	if (chord.notes in chords) {
+		chords[chord.notes].push(chord.name);
+	} else {
+		chords[chord.notes] = [chord.name];
+	}
+}
+
+/*
+0 4 7 - major 
+0 4 7 11 - major seventh
+0 3 7 - minor
+0 3 7 10 - minor seventh
+0 3 6 - diminished
+0 3 6 (9) - diminished 9
+0 4 8 - augmented
+0 4 7 10 - dominant seventh
+0 4 7 9 - major sixth
+0 3 7 9 - minor sixth
+*/
+function getChords() {
+	for (startingNote=0; startingNote<12; startingNote++) {
+		addChord(generateChord(startingNote, [0, 4, 7], getKey(startingNote) + ' major'));
+		addChord(generateChord(startingNote, [0, 4, 7, 11], getKey(startingNote) + ' major seventh'));
+		addChord(generateChord(startingNote, [0, 3, 7], getKey(startingNote) + ' minor'));
+		addChord(generateChord(startingNote, [0, 3, 7, 10], getKey(startingNote) + ' minor seventh'));
+		addChord(generateChord(startingNote, [0, 3, 6], getKey(startingNote) + ' diminished'));
+		addChord(generateChord(startingNote, [0, 3, 6, 9], getKey(startingNote) + ' dimished 9'));
+		addChord(generateChord(startingNote, [0, 4, 8], getKey(startingNote) + ' augmented'));
+		addChord(generateChord(startingNote, [0, 4, 7, 10], getKey(startingNote) + ' dominant seventh'));
+		addChord(generateChord(startingNote, [0, 4, 7, 9], getKey(startingNote) + ' major sixth'));
+		addChord(generateChord(startingNote, [0, 3, 7, 9], getKey(startingNote) + ' minor sixth'));
+	}
+}
+
+// Get a random color set (one for every light)
 function getNewColors() {
 	var colors = [];
 	for (var color = 0; color < numLights; color++) {
@@ -133,6 +145,7 @@ function getNewColors() {
 	return colors;
 }
 
+// Sets randoms colors on app start for each chord
 function initializeRandomChordColors() {
 	for (var key in chords) {
 		var name = chords[key];
@@ -156,6 +169,7 @@ function getChordVolumePercentage() {
 	return (sumVelocity / recentVelocities.length) / MIDI_MAX_RAW_VELOCIY;
 }
 
+// Communicate with hue lights
 function displayChord(chordName) {
 	//console.log('chord', chordName);
 

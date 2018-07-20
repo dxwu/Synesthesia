@@ -1,3 +1,5 @@
+// Helps the user get their MIDI input and Hue lights set up
+
 const serverUrl = window.location.protocol + '//' + window.location.host;
 
 function createRestCall(url, method) {
@@ -17,6 +19,7 @@ function isHueUserCreated(callback) {
 	request.send();
 }
 
+// Hide setup elements based on state of the hue system
 function setVisibility(hasUser) {
 	if (hasUser) {
 		document.getElementById('hasUser').style.visibility  = 'visible'; 
@@ -27,12 +30,7 @@ function setVisibility(hasUser) {
 	}
 }
 
-function onLoad() {
-	isHueUserCreated(setVisibility);
-	isMidiConnected(setMidiStatus);
-	getNumberLights();
-}
-
+// The hue API requires the user to phyiscally press the hue button to authenticate this app
 function onHueBridgeButtonPressed() {
 	var request = createRestCall(serverUrl + '/api/createhueuser', "GET");
 
@@ -98,6 +96,12 @@ function getNumberLights() {
 	}
 
 	request.send();
+}
+
+function onLoad() {
+	isHueUserCreated(setVisibility);
+	isMidiConnected(setMidiStatus);
+	getNumberLights();
 }
 
 window.onload = onLoad;
