@@ -13,7 +13,9 @@ This project uses Google Chrome's built-in MIDI input driver as a cross-platform
 # Demo
 
 Light show: https://www.youtube.com/watch?v=cDrFB9JBSgA
-Piano visualization: ![alt tag](./images/G7_chart.png?raw=true)
+
+
+Piano visualization (g7 chord): ![alt tag](./images/G7_chart.png?raw=true)
 
 # Running locally
 
