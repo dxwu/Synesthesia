@@ -1,10 +1,10 @@
 # Synesthesia 
 
-A colorful visual display driven by digital piano input.
+A colorful visual display driven wirelessly by digital piano input.
 
 # How it works
 
-Digital instruments like pianos can output data about what notes are being played. This data is called MIDI. Using MIDI data as input, we can process and analyze the notes being played in real-time on a computer or smartphone. This data is then used to drive colorful displays. By combining musical data and Philips Hue colored light bulbs, which can be controlled over your local wifi network, the colorful displays take on a new dimension.
+Digital instruments like pianos can output data about what notes are being played. This data is called MIDI. Using MIDI data as input, we can process and analyze the notes being played in real-time on a computer or smartphone. This data is then used to drive colorful displays over the internet: no wires needed!. By combining musical data and Philips Hue colored light bulbs, which can be controlled over your local wifi network, the colorful displays take on a new dimension.
 
 This project uses Google Chrome's built-in MIDI input driver as a cross-platform MIDI interface, and includes a web app that acts as the processor and light driver. The web app is written with Node.js, Express, and client-side javascript. Communication with the Philips Hue bulbs is done with REST calls from both the server and client. 
 
@@ -12,7 +12,9 @@ This project uses Google Chrome's built-in MIDI input driver as a cross-platform
 
 # Demo
 
-Light show: https://www.youtube.com/watch?v=cDrFB9JBSgA
+Light show: ![alt tag](./images/Youtube_link.png?raw=true)
+
+https://www.youtube.com/watch?v=cDrFB9JBSgA
 
 
 Piano visualization (g7 chord): ![alt tag](./images/G7_chart.png?raw=true)
